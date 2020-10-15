@@ -9,12 +9,24 @@ import UIKit
 
 class UILabelModel: UILabel {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureLabel()
     }
-    */
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init has not been imlemented")
+    }
+    
+    convenience init(textAlignment: NSTextAlignment,textColor: UIColor) {
+        self.init(frame: .zero)
+        self.textAlignment = textAlignment
+        self.textColor = textColor
+    }
+    
+    
+    private func configureLabel(){
+        numberOfLines = 2
+        font =  UIFont(name: "Verdana", size: 14)
+    }
 }

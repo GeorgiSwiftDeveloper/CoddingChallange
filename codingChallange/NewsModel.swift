@@ -6,3 +6,22 @@
 //
 
 import Foundation
+
+struct DataResponse: Decodable {
+    var title: String
+    var thumbnail: String
+    var score: Int
+}
+
+struct DataObject: Decodable {
+    var data: DataResponse
+}
+
+struct Children: Decodable {
+    var children: [DataObject]
+}
+
+struct DataMainResponse: Decodable {
+    var data: Children
+}
+

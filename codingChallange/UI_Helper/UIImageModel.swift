@@ -9,12 +9,23 @@ import UIKit
 
 class UIImageModel: UIImageView {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureImageView()
     }
-    */
+    
+    required init?(coder: NSCoder) {
+        fatalError("init has not been imlemented")
+    }
+
+    convenience init(content: ContentMode) {
+        self.init(frame: .zero)
+        self.contentMode = content
+    }
+    
+    private func configureImageView(){
+        contentMode = .scaleAspectFit
+        clipsToBounds = true
+    }
 
 }

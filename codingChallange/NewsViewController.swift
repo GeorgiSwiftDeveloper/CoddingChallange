@@ -11,15 +11,19 @@ class NewsViewController: UIViewController {
     
     let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.separatorStyle = .none
+        tableView.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
         tableView.allowsSelection = false
         return tableView
     }()
     
+    
+    var newsData = [DataResponse]()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        NewsServerConnection.newsInstance.fetchNewsFromServer()
+        NewsServerConnection.newsInstance.delegate = self
         setupTableView()
     }
     
@@ -27,8 +31,11 @@ class NewsViewController: UIViewController {
     func setupTableView(){
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.frame = self.view.frame
         tableView.register(EntertainmentCell.self, forCellReuseIdentifier: "entertaimentCell")
+        tableView.estimatedRowHeight = UITableView.automaticDimension
         view.addSubview(tableView)
+        tableView.separatorStyle = .none
         self.tableView.pinTableView(to: view)
         
     }
@@ -38,94 +45,36 @@ class NewsViewController: UIViewController {
 
 extension NewsViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return newsData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "entertaimentCell", for: indexPath) as! EntertainmentCell
         
+        cell.configureCell(news: newsData[indexPath.row])
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 400
+        
+    }
+}
+
+
+extension NewsViewController: NewsManagerDelegate {
+    func didUpdateNews(_ newsManager: [DataResponse]) {
+        newsData.append(contentsOf: newsManager)
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    func didFailWithError(_ error: Error) {
+        print(error.localizedDescription)
     }
     
     
 }
-
-class EntertainmentCell: UITableViewCell {
-
-    let cellView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.white
-        return view
-    }()
-    
-    
-    
-    let holderView: UIView = {
-        let holderView = UIView()
-        holderView.backgroundColor = UIColor.black
-        return holderView
-    }()
-    
-    let categoryLabel: UILabel = {
-        let categoryLabel = UILabel()
-        categoryLabel.textColor = UIColor.gray
-        categoryLabel.font = UIFont(name: "Verdana", size: 12.0)
-        return categoryLabel
-    }()
-    
-    let categoryTitle: UILabel = {
-        let categoryTitle = UILabel()
-        categoryTitle.textColor = UIColor.gray
-        categoryTitle.text = "adasdsadsd"
-        categoryTitle.font = UIFont(name: "Verdana", size: 12.0)
-        return categoryTitle
-    }()
-    
-    let pictureImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    
-    let numberOfComments: UILabel = {
-        let numberOfComments = UILabel()
-        numberOfComments.textColor = UIColor.gray
-        numberOfComments.font = UIFont(name: "Verdana", size: 12.0)
-        return numberOfComments
-    }()
-    
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-    }
-    
-    func setupEntertainmentCell(){
-        backgroundColor = UIColor(red: 245, green: 245, blue: 245, alpha: 0)
-        
-        addSubview(cellView)
-        cellView.addSubview(holderView)
-        cellView.addSubview(categoryLabel)
-        cellView.addSubview(categoryTitle)
-        cellView.addSubview(pictureImageView)
-        cellView.addSubview(numberOfComments)
-        
-        cellView.pinTableViewCell(to: )
-        categoryLabel.pinCategoryLabel(to: cellView)
-        categoryTitle.pinCategoryTitleLabel(to: cellView)
-        pictureImageView.pinPictureImageView(to: cellView)
-        numberOfComments.pinNumberOfCommentsLabel(to: cellView)
-        holderView.pinHolderUIView(to: cellView)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("coder has not been implemented")
-    }
-
-}
-
